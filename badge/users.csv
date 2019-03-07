@@ -1,0 +1,2 @@
+user_id,login,email,salutation,first_name,last_name,nick_name,pseudonymous,country,town,pm_group,has_talk,has_paid,rights,tshirt_size,nb_family,datetime,company,address,vat
+131367,userlogin,mail@example.tld,,Test,Attendee,"ta",0,de,Berlin,Berlin.pm,0,1,"",M,0,"2014-03-12 10:14:10.013294","","",""
