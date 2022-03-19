@@ -5,6 +5,8 @@ use v5.20;
 use strict;
 use warnings;
 
+use DateTime;
+use DateTime::TimeZone;
 use Encode;
 use Etherpad;
 use Mojo::File qw(curfile);
@@ -12,10 +14,12 @@ use Mojo::Loader qw(data_section);
 use Mojo::Template;
 use Mojo::Util qw(slugify);
 use Text::CSV_XS;
+use Time::Piece;
+use YAML::Tiny;
 
 $ENV{MOJO_MAX_REDIRECTS} = 2;
 
-my $schedule_csv = 'export_talks';
+my $schedule_csv = $ARGV[0] || 'export_talks';
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $base_url     = 'http://pad.german-perl-workshop.de/';
 my $etherpad     = Etherpad->new(
@@ -23,7 +27,7 @@ my $etherpad     = Etherpad->new(
     apikey => 'api_key',
 );
 
-my %data;
+my %talks;
 my $line = 0;
 
 open my $fh, '<:encoding(utf-8)', $schedule_csv or die $!;
@@ -41,6 +45,16 @@ while ( my $row = $csv->getline( $fh ) ) {
         $slug = substr $slug, 0, 45;
     }
 
+    state $tz = do {
+        my $dttz  = DateTime::TimeZone->new( name => 'Europe/Berlin' );
+        my $epoch = Time::Piece->strptime( $day . ' 09:00:00', '%Y-%m-%d %H:%M:%S' )->epoch;
+        my $dt    = DateTime->from_epoch( epoch =>  $epoch );
+        my $z     = $dttz->offset_for_datetime( $dt );
+        $z + 5;
+    };
+
+    warn $tz;
+
     warn $slug;
 
     my $talk = {
@@ -52,29 +66,13 @@ while ( my $row = $csv->getline( $fh ) ) {
     };
 
     $etherpad->create_pad( $slug );
+    warn $time . ' ' . $tz;
 
-    $data{$day}->{$time} = $talk;
+    my $timestamp_start_minus_5_mins = Time::Piece->strptime( $time, '%Y-%m-%d %H:%M:%S' )->epoch - $tz;
+
+    $talks{$timestamp_start_minus_5_mins} = $talk;
 }
 close $fh;
 
-my $tmpl_raw = data_section 'main', 'etherpads.txt.ep';
-my $tmpl     = Mojo::Template->new->vars(1);
+curfile->sibling('etherpads.yml')->spurt( encode_utf8( YAML::Tiny->new( \%talks )->write_string ) );
 
-my $xml = $tmpl->render( $tmpl_raw, { gpw_data => \%data } );
-
-curfile->sibling('etherpads.txt')->spurt( encode_utf8( $xml ) );
-
-__DATA__
-@@ etherpads.txt.ep
-% for my $day ( sort keys %{ $gpw_data} ) {
-    % my $day_data = $gpw_data->{$day};
-
-    % for my $talk_key ( sort keys %{ $day_data } ) {
-        % my $talk = $day_data->{$talk_key};
-Talk: <%= $talk->{title} %>
-Zeit: <%= $talk->{time} %>
-Etherpad: <%= $talk->{slug} %>
-Etherpad URL: <%= $talk->{url} %>
--------------
-    % }
-% }
