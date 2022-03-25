@@ -13,7 +13,7 @@ use Encode;
 
 my $file = Mojo::File->new('./Badge-4er-tmpl.pure.svg');
 
-my @user_pages = _get_gpw_users();
+my @user_pages = _get_gpw_users( $ARGV[0] || 'users.csv' );
 
 my $page_nr = 0;
 for my $page ( @user_pages ) {
@@ -49,15 +49,17 @@ for my $page ( @user_pages ) {
     $page->spurt( encode( 'utf-8', "$dom") );
 
     # convert SVG to PDF
-    my $cmd = sprintf "inkscript --export-pdf Badge.%s.pdf %s", $page_nr, $page->to_string;
+    my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
     qx{$cmd};
 }
 
 
 sub _get_gpw_users {
+    my ($file) = shift;
+
     my @users;
 
-    if ( open my $fh, '<:encoding(utf-8)', 'users.csv' ) {
+    if ( open my $fh, '<:encoding(utf-8)', $file ) {
         my @temp_users;
         my $csv = Text::CSV_XS->new({ binary => 1 });
         while ( my $row = $csv->getline( $fh ) ) {

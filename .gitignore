@@ -1,3 +1,5 @@
 *.sw*
 /schedule/etherpads.*
 /schedule/schedule.xml
+/badge/Badges/*.svg
+/badge/Badges/*.pdf
