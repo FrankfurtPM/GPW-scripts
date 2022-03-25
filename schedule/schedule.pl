@@ -18,6 +18,7 @@ my $schedule_csv = $ARGV[0] || 'export_talks';
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $uuid         = Data::UUID->new;
 my $base_url     = 'https://act.yapc.eu/gpw2022/';
+my $tz           = '+02:00';
 
 my %data;
 my $line = 0;
@@ -33,18 +34,20 @@ while ( my $row = $csv->getline( $fh ) ) {
     my ($day,$start) = split / /, $time;
 
     $time =~ s/ /T/;
+    $time .= $tz;
 
     my $talk = {
         id        => $row->[4],
         title     => $row->[5],
         abstract  => $row->[6],
         duration  => _calc_duration( $row->[9] ),
-        timestamp => $row->[15],
+        timestamp => $time,
         lang      => $row->[18],
         slug      => slugify( $row->[5] ),
         uuid      => $uuid->create_str,
         url       => $base_url . 'talk/' . $row->[4],
         start     => $start,
+        tz        => $tz,
     };
 
     $talk->{persons}  = [ { id => $row->[0], name => join ' ', @{$row}[1,2] } ];
@@ -85,7 +88,6 @@ __DATA__
         <end>2022-04-01</end>
         <days>3</days>
         <timeslot_duration>00:10</timeslot_duration>
-        <base_url>https://act.yapc.eu/gpw2022/</base_url>
     </conference>
 % for my $day ( sort keys %{ $gpw_data} ) {
     % my $day_data = $gpw_data->{$day};
@@ -102,7 +104,6 @@ __DATA__
                 <duration><%= $talk->{duration} %></duration>
                 <room>main</room>
                 <slug><%= $talk->{slug} %></slug>
-                <url><%= $talk->{url} %></url>
                 <recording>
                     <license></license>
                     <optout>false</optout>
@@ -124,7 +125,7 @@ __DATA__
                 </links>
                 <attachments>
                 </attachments>
-                <scene>Orga-Screenshare (obs.ninja)</scene>
+                <video_download_url/>
             </event>
 % }
         </room>
