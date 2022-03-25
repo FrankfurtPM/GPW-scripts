@@ -17,7 +17,7 @@ use Text::CSV_XS;
 my $schedule_csv = 'export_talks';
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $uuid         = Data::UUID->new;
-my $base_url     = 'https://act.yapc.eu/gpw2021/';
+my $base_url     = 'https://act.yapc.eu/gpw2022/';
 
 my %data;
 my $line = 0;
@@ -78,13 +78,13 @@ __DATA__
     <generator name='gpw_schedule.pl' version='1.0'></generator>
     <version>mkdir</version>
     <conference>
-        <acronym>gpw2021</acronym>
-        <title>German Perl-/Raku-Workshop 2021</title>
-        <start>2021-03-24</start>
-        <end>2021-03-26</end>
+        <acronym>gpw2022</acronym>
+        <title>German Perl-/Raku-Workshop 2022</title>
+        <start>2022-03-30</start>
+        <end>2022-04-01</end>
         <days>3</days>
         <timeslot_duration>00:10</timeslot_duration>
-        <base_url>https://act.yapc.eu/gpw2021/</base_url>
+        <base_url>https://act.yapc.eu/gpw2022/</base_url>
     </conference>
 % for my $day ( sort keys %{ $gpw_data} ) {
     % my $day_data = $gpw_data->{$day};
@@ -108,7 +108,7 @@ __DATA__
                 </recording>
                 <title><%== $talk->{title} %></title>
                 <subtitle></subtitle>
-                <track>GPW2021</track>
+                <track>GPW2022</track>
                 <type>lecture</type>
                 <language><%= $talk->{lang} %></language>
                 <abstract><%== $talk->{abstract} %></abstract>
