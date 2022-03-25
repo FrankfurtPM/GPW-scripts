@@ -14,7 +14,7 @@ use Mojo::Template;
 use Mojo::Util qw(slugify);
 use Text::CSV_XS;
 
-my $schedule_csv = 'export_talks';
+my $schedule_csv = $ARGV[0] || 'export_talks';
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $uuid         = Data::UUID->new;
 my $base_url     = 'https://act.yapc.eu/gpw2022/';
@@ -73,6 +73,7 @@ sub _calc_duration {
 __DATA__
 @@ schedule.xml.ep
 % use List::Util qw(min max);
+% use Mojo::Util qw(html_unescape);
 <?xml version='1.0' encoding='utf-8' ?>
 <schedule>
     <generator name='gpw_schedule.pl' version='1.0'></generator>
@@ -111,7 +112,7 @@ __DATA__
                 <track>GPW2022</track>
                 <type>lecture</type>
                 <language><%= $talk->{lang} %></language>
-                <abstract><%== $talk->{abstract} %></abstract>
+                <abstract><![CDATA[<%= html_unescape( $talk->{abstract} ) %>]]></abstract>
                 <description></description>
                 <logo></logo>
                 <persons>
