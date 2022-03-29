@@ -21,14 +21,21 @@ for my $page ( @user_pages ) {
 
     $page_nr++;
 
-    for my $i ( 0 .. 3 ) {
+    for my $i ( 0 .. 1 ) {
         say sprintf "Set name %s...", encode( 'utf-8', $page->[$i]->[0] );
 
+        my ($first, $second) = $i == 0 ? ( 1, 2 ) : (3, 4);
+
         my $firstname      = $page->[$i]->[1];
-        my $firstname_node = $dom->find('#firstname-' . ($i+1) )->first;
+        my $firstname_node = $dom->find('#firstname-' . ($first) )->first;
         $firstname_node->content( $firstname );
 
-        $dom->find('#lastname-' . ($i+1) )->first->content( $page->[$i]->[2] );
+        $dom->find('#lastname-' . ($first) )->first->content( $page->[$i]->[2] );
+
+        my $firstname_node2 = $dom->find('#firstname-' . ($second) )->first;
+        $firstname_node2->content( $firstname );
+
+        $dom->find('#lastname-' . ($second) )->first->content( $page->[$i]->[2] );
 
         my $style = $firstname_node->attr('style');
 
@@ -84,8 +91,8 @@ sub _get_gpw_users {
         close $fh;
 
         my $tabulator = Data::Tabulate->new;
-        $tabulator->min_columns(4);
-        $tabulator->max_columns(4);
+        $tabulator->min_columns(2);
+        $tabulator->max_columns(2);
         $tabulator->fill_with( [ '', '', '' ] );
 
         @users = $tabulator->tabulate( @temp_users );
