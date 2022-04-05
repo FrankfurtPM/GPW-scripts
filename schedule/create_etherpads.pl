@@ -50,7 +50,6 @@ while ( my $row = $csv->getline( $fh ) ) {
         my $epoch = Time::Piece->strptime( $day . ' 09:00:00', '%Y-%m-%d %H:%M:%S' )->epoch;
         my $dt    = DateTime->from_epoch( epoch =>  $epoch );
         my $z     = $dttz->offset_for_datetime( $dt );
-        $z + 5;
     };
 
     warn $tz;
@@ -65,12 +64,15 @@ while ( my $row = $csv->getline( $fh ) ) {
         time  => $time,
     };
 
-    $etherpad->create_pad( $slug );
+    eval {
+        $etherpad->create_pad( $slug );
+    };
+
     warn $time . ' ' . $tz;
 
-    my $timestamp_start_minus_5_mins = Time::Piece->strptime( $time, '%Y-%m-%d %H:%M:%S' )->epoch - $tz;
+    my $timestamp_start = Time::Piece->strptime( $time, '%Y-%m-%d %H:%M:%S' )->epoch - $tz;
 
-    $talks{$timestamp_start_minus_5_mins} = $talk;
+    $talks{$timestamp_start} = $talk;
 }
 close $fh;
 
