@@ -17,7 +17,7 @@ my @user_pages = _get_gpw_users( $ARGV[0] || 'users.csv' );
 
 my $page_nr = 0;
 for my $page ( @user_pages ) {
-    my $dom  = Mojo::DOM->new( $file->slurp );
+    my $dom  = Mojo::DOM->new( decode_utf8 $file->slurp );
 
     $page_nr++;
 
