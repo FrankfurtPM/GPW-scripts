@@ -53,7 +53,7 @@ for my $page ( @user_pages ) {
     }
 
     my $page = Mojo::File->new('./Badges/Badge.page' . $page_nr . '.svg');
-    $page->spurt( encode( 'utf-8', "$dom") );
+    $page->spew( encode( 'utf-8', "$dom") );
 
     # convert SVG to PDF
     my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
