@@ -56,7 +56,8 @@ for my $page ( @user_pages ) {
     $page->spew( encode( 'utf-8', "$dom") );
 
     # convert SVG to PDF
-    my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
+    #my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
+    my $cmd = sprintf "inkscape  --export-filename=Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
     qx{$cmd};
 }
 
