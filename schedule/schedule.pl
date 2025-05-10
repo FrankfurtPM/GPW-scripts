@@ -62,7 +62,7 @@ my $tmpl     = Mojo::Template->new->vars(1);
 
 my $xml = $tmpl->render( $tmpl_raw, { gpw_data => \%data } );
 
-curfile->sibling('schedule.xml')->spurt( encode_utf8( $xml ) );
+curfile->sibling('schedule.xml')->spew( encode_utf8( $xml ) );
 
 sub _calc_duration {
     my ($min) = shift;
