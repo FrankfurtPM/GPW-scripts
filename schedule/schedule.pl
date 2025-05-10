@@ -17,7 +17,7 @@ use Text::CSV_XS;
 my $schedule_csv = $ARGV[0] || 'export_talks';
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $uuid         = Data::UUID->new;
-my $base_url     = 'https://act.yapc.eu/gpw2022/';
+my $base_url     = 'https://act.yapc.eu/gpw2024/';
 my $tz           = '+02:00';
 
 my %data;
