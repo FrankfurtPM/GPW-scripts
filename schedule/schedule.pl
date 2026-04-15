@@ -15,9 +15,10 @@ use Mojo::Util qw(slugify);
 use Text::CSV_XS;
 
 my $schedule_csv = $ARGV[0] || 'export_talks';
+my $year         = 1900+(localtime())[3];
 my $csv          = Text::CSV_XS->new({ sep_char => ',', binary => 1 });
 my $uuid         = Data::UUID->new;
-my $base_url     = 'https://act.yapc.eu/gpw2024/';
+my $base_url     = "https://act.yapc.eu/gpw$year/";
 my $tz           = '+02:00';
 
 my %data;
