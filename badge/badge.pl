@@ -50,13 +50,15 @@ for my $page ( @user_pages ) {
         }
 
         $firstname_node->attr( style => $style );
+        $firstname_node2->attr( style => $style );
     }
 
     my $page = Mojo::File->new('./Badges/Badge.page' . $page_nr . '.svg');
-    $page->spurt( encode( 'utf-8', "$dom") );
+    $page->spew( encode( 'utf-8', "$dom") );
 
     # convert SVG to PDF
-    my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
+    #my $cmd = sprintf "inkscape --export-pdf Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
+    my $cmd = sprintf "inkscape  --export-filename=Badges/Badge.%s.pdf %s", $page_nr, $page->to_string;
     qx{$cmd};
 }
 
