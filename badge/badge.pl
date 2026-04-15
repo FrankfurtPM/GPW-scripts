@@ -50,6 +50,7 @@ for my $page ( @user_pages ) {
         }
 
         $firstname_node->attr( style => $style );
+        $firstname_node2->attr( style => $style );
     }
 
     my $page = Mojo::File->new('./Badges/Badge.page' . $page_nr . '.svg');
